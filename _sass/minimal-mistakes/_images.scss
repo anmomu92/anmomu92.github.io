@@ -1,0 +1,20 @@
+div.polaroid {
+  width: 50%;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: -5px 5px 8px black;
+  margin-bottom: 25px;
+}
+
+div.container {
+  text-align: center;
+  color: black;
+  padding: 10px 20px;
+}
+
+div#top {
+  width: 100%;
+  position: relative;
+  left: 0;
+  top: 0;
+}
