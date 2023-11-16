@@ -1,0 +1,3 @@
+I"�<h2 id="qué-es-gitea">¿Qué es Gitea?</h2>
+<p>Gitea es un software de código abierto que permite alojar código con control de versión de versiones, de manera similar a como se lleva a cabo en GitHub. Debido a que Gitea es más ligero, este se puede alojar en ordenadores monoplaca como Raspberry Pi o Zimaboard. En este caso, alojaremos Gitea en una Zimaboard, que es un ordenador monoplaca que utiliza una CPU de arquitectura amd64 en vez de arm64.</p>
+:ET

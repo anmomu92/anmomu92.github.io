@@ -1,0 +1,50 @@
+I"�<h2 id="qué-es-gitea">¿Qué es Gitea?</h2>
+<p>Gitea es un software de código abierto que permite alojar código con control de versión de versiones, de manera similar a como se lleva a cabo en GitHub. Debido a que Gitea es más ligero, este se puede alojar en ordenadores monoplaca como Raspberry Pi o Zimaboard. En este caso, alojaremos Gitea en una Zimaboard, que es un ordenador monoplaca que utiliza una CPU de arquitectura amd64 en vez de arm64.</p>
+
+<h2 id="instalar-gitea">Instalar Gitea</h2>
+<p>La instalación de Gitea es muy sencilla. Se lleva a cabo a través de la tienda de aplicaciones de la ZimaBoard. Los valores de los diferentes campos no es necesario tocarlos. Si decidieras cambiar el puerto SSH, tienes que quedarte con el nuevo valor que le asignes, ya que se tendrá que utilizar de cara a la conexión por SSH a la placa. Tras instalar la aplicación, puedes entrar en ella clicando el icono de la misma. Si todo ha ido bien, accederéis a la página de inicio de Gitea (véase la Figura 1), donde podréis crear vuestra cuenta o iniciar sesión.</p>
+
+<figure>
+    <img src="/assets/images/gitea/gitea-home-page.png" alt="Pagina de inicio de Gitea" />
+    <figcaption>Figura 1. Página de inicio de Gitea.</figcaption>
+</figure>
+
+<h3 id="modificar-el-fichero-de-configuración-de-git-del-repositorio">Modificar el fichero de configuración de git del repositorio</h3>
+<p>La primera solución es añadir la opción <code class="language-plaintext highlighter-rouge">sshcommand = ssh -p &lt;puerto-ssh-host&gt; -i &lt;ruta-clave-privada&gt;</code> dentro de la sección <code class="language-plaintext highlighter-rouge">[core]</code> del fichero <code class="language-plaintext highlighter-rouge">.git/config</code> que se encuentra en la raíz del repositorio que quieres subir a Gitea. Un ejemplo de dicho fichero sería el siguiente:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[core]
+	repositoryformatversion = 0
+	filemode = true
+	bare = false
+	logallrefupdates = true
+    sshcommand = sshcommand = ssh -p &lt;puerto-ssh-host&gt; -i &lt;ruta-clave-privada&gt;
+[remote "origin"]
+	url = &lt;url-repositorio-remoto&gt;
+	fetch = +refs/heads/*:refs/remotes/origin/*
+[branch "main"]
+	remote = origin
+	merge = refs/heads/main
+</code></pre></div></div>
+
+<p>El problema de esta solución es que sólo vale para el repositorio cuyo fichero de configuración de git modifiquemos.</p>
+
+<h3 id="modificar-el-puerto-por-defecto-a-nivel-global">Modificar el puerto por defecto a nivel global</h3>
+<p>Si se quiere modificar dicha opción a nivel global, habría que ejecutar el siguiente commando: <code class="language-plaintext highlighter-rouge">git config --global core.sshCommand "ssh -p &lt;puerto-ssh-host&gt; -i &lt;ruta-clave-privada&gt;"</code>. De esta manera, se modifica el fichero de configuración global de git para el usuario. No obstante, puede que queramos tener algunos repositorios en GitHub o GitLab, que utilizan el puerto 22 para SSH. En este caso, lo que imagino que pasaría (no lo he probado, no obstante) es que al sincronizar los cambios con GitHub, nos pida la contraseña. Por eso, lo mejor sería llevar a cabo la tercera solución.</p>
+
+<h3 id="modificar-el-fichero-de-configuración-de-ssh">Modificar el fichero de configuración de SSH</h3>
+<p>Dentro del fichero de configuración de SSH (<code class="language-plaintext highlighter-rouge">~/.ssh/config</code>) se pueden definir diferentes hosts con diferentes características. Esto es muy útil si solemos acceder con frecuencia a un ordenador por SSH y no queremos estar tecleando el usuario y la dirección IP constantemente. Además, en este fichero podemos cambiar opciones de configuración para los diferentes ordenadores remotos que tengamos definidos en él. Por ejemplo, en mi caso, el fichero <code class="language-plaintext highlighter-rouge">~/.ssh/config</code> contiene lo siguiente:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code># Host-specific settings
+Host casaos.local
+  # Ajustes personalizados para el host casaos.local
+  HostName casaos.local
+  Port 222
+  User casaos 
+  IdentityFile ~/.ssh/id_rsa
+</code></pre></div></div>
+
+<p>De este modo, cada vez que sincronice el repositorio con el repositorio remoto localizado en casaos.local, se usará el puerto 222 en vez del 22. Un detalle importante a mencionar en este punto es que esta sección definida en el fichero, no nos serviría para acceder a la ZimaBoard por SSH, ya que para eso se utilizaría el puerto 22 y la clave SSH que se haya usado para tal efecto.</p>
+
+<h2 id="conclusiones">Conclusiones</h2>
+<p>Esta entrada del blog no detalla la instalación de Gitea a través de contenedores. Está destinada a ofrecer diferentes soluciones al problema de la generación de claves SSH que me ocurrió a mi en el momento de instalarlo. Asimismo, no soy experto en el tema, así que si he metido la pata en algún detalle técnico, perdón.</p>
+:ET
